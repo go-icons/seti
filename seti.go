@@ -10,7 +10,7 @@
 // document), [Folder] returns the folder glyph. A renderer such as
 // go-widgets/toolkit's SVGIcon turns the returned SVG into a drawn glyph; this
 // package draws nothing itself.
-package seticons
+package seti
 
 import (
 	"embed"

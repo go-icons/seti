@@ -1,5 +1,10 @@
 # seti-icons
 
+[![ci](https://github.com/go-icons/seti/actions/workflows/ci.yml/badge.svg)](https://github.com/go-icons/seti/actions/workflows/ci.yml)
+![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+[![Go Reference](https://pkg.go.dev/badge/github.com/go-icons/seti.svg)](https://pkg.go.dev/github.com/go-icons/seti)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
+
 File-type icons from the [Seti UI](https://github.com/jesseweed/seti-ui) icon
 set (by Jesse Weed, MIT), as embedded SVG documents keyed by file name — for
 pure-Go UIs that render their own icons.
@@ -7,8 +12,8 @@ pure-Go UIs that render their own icons.
 ```go
 import seti "github.com/go-icons/seti"
 
-svg := seticons.Icon("paper.tex") // the Seti .tex glyph, as an SVG string
-dir := seticons.Folder()          // the folder glyph
+svg := seti.Icon("paper.tex") // the Seti .tex glyph, as an SVG string
+dir := seti.Folder()          // the folder glyph
 ```
 
 `Icon(filename)` matches by exact base name first (`go.mod`, `LICENSE`,

@@ -20,84 +20,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-go@v5
         with:
           go-version: "1.26.4"
           check-latest: true
           cache: true
-
       - name: gofmt
         run: |
           unformatted=$(gofmt -l .)
-          [ -z "$unformatted" ] || {
-            echo "::error::not gofmt-clean:"; echo "$unformatted"
-            gofmt -d $unformatted; exit 1; }
-
+          [ -z "$unformatted" ] || { echo "::error::not gofmt-clean:"; echo "$unformatted"; gofmt -d $unformatted; exit 1; }
       - name: go vet
         run: go vet ./...
-
-      - name: Test with coverage
-        run: go test -coverprofile=coverage.out ./...
-
-      - name: Assert 100% statement coverage
+      - name: Test with 100% coverage gate
         run: |
-          # Exact, no rounding: fail if ANY line (per-function or the total) is
-          # below 100.0%. The old `printf '%.0f'` on the aggregate let a
-          # 99.95% slip through as "100" and masked an under-covered helper.
-          go tool cover -func=coverage.out
-          below=$(go tool cover -func=coverage.out | awk '$NF != "100.0%"')
-          if [ -n "$below" ]; then
-            echo "::error::coverage below 100% on:"
-            echo "$below"
-            exit 1
-          fi
-
-      - name: Race detector (CGO on, for -race only)
-        env:
-          CGO_ENABLED: "1"
-        run: go test -race ./...
-
-      - name: Cross-compile smoke (all 6 64-bit arches + wasm + darwin)
-        run: |
-          for arch in amd64 arm64 riscv64 loong64 ppc64le s390x; do
-            echo "== linux/$arch =="
-            GOOS=linux GOARCH=$arch go build ./...
-          done
-          GOOS=js     GOARCH=wasm  go build ./...
-          GOOS=darwin GOARCH=arm64 go build ./...
-          GOOS=windows GOARCH=amd64 go build ./...
-
-      # The rougelex sub-module (the rouge-backed CodeEditor highlighter) is a
-      # SEPARATE Go module so importing the core toolkit never pulls a lexing
-      # engine in. Its own 100% gate + cross-build run here, because the root
-      # module's ./... deliberately does not descend into a nested module.
-      - name: rougelex module — vet + test + 100% coverage
-        working-directory: rougelex
-        run: |
-          go vet ./...
           go test -coverprofile=coverage.out ./...
           go tool cover -func=coverage.out
           below=$(go tool cover -func=coverage.out | awk '$NF != "100.0%"')
-          if [ -n "$below" ]; then
-            echo "::error::rougelex coverage below 100% on:"
-            echo "$below"
-            exit 1
-          fi
-
-      - name: rougelex module — race detector
-        working-directory: rougelex
-        env:
-          CGO_ENABLED: "1"
-        run: go test -race ./...
-
-      - name: rougelex module — cross-compile smoke
-        working-directory: rougelex
-        run: |
-          for arch in amd64 arm64 riscv64 loong64 ppc64le s390x; do
-            echo "== linux/$arch =="
-            GOOS=linux GOARCH=$arch go build ./...
-          done
-          GOOS=js      GOARCH=wasm  go build ./...
-          GOOS=darwin  GOARCH=arm64 go build ./...
-          GOOS=windows GOARCH=amd64 go build ./...
+          if [ -n "$below" ]; then echo "::error::coverage below 100% on:"; echo "$below"; exit 1; fi

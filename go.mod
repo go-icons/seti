@@ -1,3 +1,3 @@
-module github.com/go-widgets/seti-icons
+module github.com/go-icons/seti-icons
 
 go 1.23

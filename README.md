@@ -5,7 +5,7 @@ set (by Jesse Weed, MIT), as embedded SVG documents keyed by file name — for
 pure-Go UIs that render their own icons.
 
 ```go
-import seticons "github.com/go-widgets/seti-icons"
+import seticons "github.com/go-icons/seti-icons"
 
 svg := seticons.Icon("paper.tex") // the Seti .tex glyph, as an SVG string
 dir := seticons.Folder()          // the folder glyph
